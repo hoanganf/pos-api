@@ -8,7 +8,6 @@ define('DATABASE_NAME','anit_pos_new');
 define('LIB_DIR','../pos-lib/');
 define('CONTROLLER_DIR','src/controllers/');
 define('MODEL_DIR','src/models/');
-define('VIEW_DIR','src/views/');
 define('LOGIN_DIR','../pos-login/');
 define('LOG_DIR','../log/');
 //have to import for login
@@ -22,5 +21,5 @@ include_once constant("LIB_DIR").'/php/dao/BaseDAO.php';
 include_once constant("LIB_DIR").'/php/util/ResponseBuilder.php';
 include_once constant("LIB_DIR").'/php/util/ResponseGetter.php';
 
-include_once constant("CONTROLLER_DIR").'LocalApiResponseGetter.php';
+include_once constant("CONTROLLER_DIR").'ApiResponseGetter.php';
 ?>

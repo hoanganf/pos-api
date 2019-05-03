@@ -7,11 +7,11 @@
 				if(isset($_GET['areaId']) && is_numeric($_GET['areaId'])){
 					$orders=$orderDAO->getOrderListGroupByTableInArea($_GET['areaId']);
 					if(!empty($orders)) return json_encode(array('status'=>true,'code'=>SUCCEED,'orders'=>$orders));
-					else return LocalApiResponseGetter::createResponse('false',E_NO_ORDER,'NO ORDER');
+					else return ApiResponseGetter::createResponse('false',E_NO_ORDER,'NO ORDER');
 				}else{
 					$orders=$orderDAO->getOrderListGroupByTableInArea(-1);
 					if(!empty($orders)) return json_encode(array('status'=>true,'code'=>SUCCEED,'orders'=>$orders));
-					else return LocalApiResponseGetter::createResponse('false',E_NO_ORDER,'NO ORDER');
+					else return ApiResponseGetter::createResponse('false',E_NO_ORDER,'NO ORDER');
 				}
 			}else{
 				$request->body=json_decode(file_get_contents("php://input"));
@@ -93,14 +93,14 @@
 			}
 			/* close connection */
 			$orderDAO->close();
-			return LocalApiResponseGetter::createResponse("true",SUCCEED,$numberId);
+			return ApiResponseGetter::createResponse("true",SUCCEED,$numberId);
 		}
 		public function rollBack($orderAdapter,$message){
 			// Rollback transaction\n
 			$orderAdapter->rollBack();
 			/* close connection */
 			$orderAdapter->close();
-			return LocalApiResponseGetter::createResponse("false",E_MYSQL_QUERY_FAIL,$message);
+			return ApiResponseGetter::createResponse("false",E_MYSQL_QUERY_FAIL,$message);
 		}
 	}
 ?>

@@ -1,5 +1,5 @@
 <?php
-	class LocalApiResponseGetter extends ResponseGetter{
+	class ApiResponseGetter extends ResponseGetter{
 		public function buildResponse($pageId,$request){
 			switch ($pageId) {
 	      case 'order':
@@ -7,6 +7,9 @@
 	        break;
 				case 'product':
 	        $responseBuilder=new ProductResponseBuilder();
+	        break;
+				case 'table':
+	        $responseBuilder=new TableResponseBuilder();
 	        break;
 				case 'comment':
 	        $responseBuilder=new CommentResponseBuilder();
