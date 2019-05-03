@@ -4,7 +4,9 @@ class CommentDAO extends BaseDAO{
      parent::__construct("comment");
   }
   function getAllByProductId($productId){
-    return $this->getAllWhere('product_id='.$productId);
+    // id not used
+    //return $this->getAll('product_id='.$productId);
+    return $this->getAll();
   }
   function getComment($commentId){
     return $this->getOnceWhere('id='.$commentId);

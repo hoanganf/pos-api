@@ -6,11 +6,11 @@
 			if($_SERVER['REQUEST_METHOD'] === 'GET'){
 				if(isset($_GET['areaId']) && is_numeric($_GET['areaId'])){
 					$orders=$orderDAO->getOrderListGroupByTableInArea($_GET['areaId']);
-					if(!empty($orders)) return json_encode(array('status'=>true,'code'=>SUCCEED,'orders'=>$orders),true);
+					if(!empty($orders)) return json_encode(array('status'=>true,'code'=>SUCCEED,'orders'=>$orders));
 					else return LocalApiResponseGetter::createResponse('false',E_NO_ORDER,'NO ORDER');
 				}else{
 					$orders=$orderDAO->getOrderListGroupByTableInArea(-1);
-					if(!empty($orders)) return json_encode(array('status'=>true,'code'=>SUCCEED,'orders'=>$orders),true);
+					if(!empty($orders)) return json_encode(array('status'=>true,'code'=>SUCCEED,'orders'=>$orders));
 					else return LocalApiResponseGetter::createResponse('false',E_NO_ORDER,'NO ORDER');
 				}
 			}else{
@@ -29,8 +29,7 @@
 				//set connect to disable autoclose on DAO
 				$orderDAO->connect();
 				/* set autocommit to off */
-				$orderDAO->queryNotAutoClose("BEGIN");
-				$orderDAO->queryNotAutoClose("START TRANSACTION");
+				$orderDAO->setAutoCommit(FALSE);
 				//if new order have to get numberId
 				if($isNewOrder){
 				  $numberId=$numberDAO->createNumberId();
@@ -48,11 +47,13 @@
 								break;
 						}
 			    }
-					if (!$isTransactionPassed || !$orderDAO->queryNotAutoClose("COMMIT")) {
+					if (!$isTransactionPassed) {
 						//return status for numberId
 						$numberAdapter->removeNumberId($numberId);
 						return $this->rollBack($orderDAO,'create order failed.');
-			  	}
+			  	}else{
+						$orderDAO->commit();
+					}
 				}else{
 					$isTransactionPassed=true;
 					$newOrderInEditOrder=0;
@@ -63,7 +64,7 @@
 					}
 					foreach( $request->body->data as $order){
 						if(!isset($order->id)){//new
-							$product=$productDAO->getProduct($order->product_id,true);
+							$product=$productDAO->getProduct($order->product_id);
 							$order->status=$product['default_status'];
 							$order->price=$product['price'];
 							if(!$orderDAO->createOrder($order,$request->user_name,$numberId)){
@@ -79,9 +80,11 @@
 							 $editedOrder++;
 						}
 			    }
-					if (!$isTransactionPassed || !$orderDAO->queryNotAutoClose("COMMIT")) {
+					if (!$isTransactionPassed) {
 						return $this->rollBack($orderDAO,'create order failed.');
-			  	}
+			  	}else{
+						 $orderDAO->commit();
+					}
 					if(($editedOrder + $newOrderInEditOrder) === 0){
 		      	$numberDAO->removeNumberId($numberId);
 						$numberId=0;
@@ -94,7 +97,7 @@
 		}
 		public function rollBack($orderAdapter,$message){
 			// Rollback transaction\n
-			$orderAdapter->queryNotAutoClose("ROLLBACK");
+			$orderAdapter->rollBack();
 			/* close connection */
 			$orderAdapter->close();
 			return LocalApiResponseGetter::createResponse("false",E_MYSQL_QUERY_FAIL,$message);

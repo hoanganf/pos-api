@@ -5,15 +5,15 @@
 			$adapter=new ProductDAO();
 			if(isset($_GET['categoryId']) && is_numeric($_GET['categoryId'])){
 				$products=$adapter->getProductsByCategoryId($_GET['categoryId']);
-				if(!empty($products)) return json_encode(array('status'=>true,'code'=>SUCCEED,'products'=>$products),true);
+				if(!empty($products)) return json_encode(array('status'=>true,'code'=>SUCCEED,'products'=>$products));
 				else return LocalApiResponseGetter::createResponse('false',E_NO_PRODUCT,'NO PRODUCT');
 			}else if(isset($_GET['productId']) && is_numeric($_GET['productId'])){
 				$product=$adapter->getProduct($_GET['productId']);
-				if($product!==null) return json_encode(array('status'=>true,'code'=>SUCCEED,'product'=>$product),true);
+				if($product!==null) return json_encode(array('status'=>true,'code'=>SUCCEED,'product'=>$product));
 				else return LocalApiResponseGetter::createResponse('false',E_NO_PRODUCT,'NO PRODUCT');
 			}else{
 				$products=$adapter->getAll();
-				if(!empty($products)) return json_encode(array('status'=>true,'code'=>SUCCEED,'products'=>$products),true);
+				if(!empty($products)) return json_encode(array('status'=>true,'code'=>SUCCEED,'products'=>$products));
 				else return LocalApiResponseGetter::createResponse('false',E_NO_PRODUCT,'NO PRODUCT');
 			}
 		}
